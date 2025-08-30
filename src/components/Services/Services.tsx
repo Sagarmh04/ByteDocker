@@ -23,9 +23,15 @@ const defaultMyCards = [
     description: "Quick Commerce Support Solutions: Logistic and inventory management solutions for companies offering fast deliveries. \nAutomated Mail System for Leads: Automated email tools for real estate and e-commerce businesses. \nInventory and Order Management System: A streamlined tool to track inventory levels, process orders, and manage logistics in real time, specifically suited for e-commerce or quick commerce businesses looking for a lean inventory management solution. \nCustomer Self-Service Portal: An online portal where customers can check order status, update information, submit support tickets, and access FAQs or help resources. This could reduce the load on customer support teams.",
   },
 ];
-
+interface CardData {
+  id: string;
+  src: string;
+  alt: string;
+  title: string;
+  description: string;
+}
 export default function Services() {
-  const [cards, setCards] = useState([]);
+const [cards, setCards] = useState<CardData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
