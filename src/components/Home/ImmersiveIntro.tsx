@@ -229,7 +229,6 @@ const GlowingButton = ({
       href={href}
       title={title}
       className="relative inline-flex items-center justify-center rounded-full border border-white/30 bg-black/40 px-8 py-3 text-lg font-medium text-white backdrop-blur-sm transition-shadow duration-300 hover:shadow-[0_0_20px] hover:shadow-white/30"
-      style={{ fontFamily: "'Quicksand Medium', sans-serif" }}
     >
       <div
         className="absolute inset-0 rounded-full"
