@@ -131,7 +131,7 @@ const updateService = async (
 
   if (serviceIndex === -1) throw new Error("Service not found to update.");
 
-  let finalServiceData = { ...updatedService };
+  const finalServiceData = { ...updatedService };
 
   if (newImageFile) {
     await deleteImage(finalServiceData.src);
@@ -197,32 +197,36 @@ export default function ServicesPage() {
     setDeletingService(service);
     setIsDeleteDialogOpen(true);
   };
+type ServiceFormValues = Record<string, string>;
 
-  const handleFormSubmit = async (values: any, imageFile?: File) => {
-    setIsSubmitting(true);
-    const toastId = toast.loading(editingService ? "Updating service..." : "Adding service...");
+const handleFormSubmit = async (
+  values: ServiceFormValues,
+  imageFile?: File
+) => {
+  setIsSubmitting(true);
+  const toastId = toast.loading(editingService ? "Updating service..." : "Adding service...");
 
-    try {
-      // Deconstruct the values from the form to create a clean data object
-      const { title, alt, description } = values;
-      const cleanData = { title, alt, description };
+  try {
+    const { title, alt, description } = values;
+    const cleanData = { title, alt, description };
 
-      if (editingService) {
-        await updateService({ ...editingService, ...cleanData }, imageFile);
-        toast.success("Service updated!", { id: toastId });
-      } else {
-        await addService(cleanData, imageFile as File);
-        toast.success("Service added!", { id: toastId });
-      }
-      setIsFormDialogOpen(false);
-      await fetchServices();
-    } catch (error) {
-      console.error("Submit Error:", error);
-      toast.error(error instanceof Error ? error.message : "An unknown error occurred.", { id: toastId });
-    } finally {
-      setIsSubmitting(false);
+    if (editingService) {
+      await updateService({ ...editingService, ...cleanData }, imageFile);
+      toast.success("Service updated!", { id: toastId });
+    } else {
+      await addService(cleanData, imageFile as File);
+      toast.success("Service added!", { id: toastId });
     }
-  };
+    setIsFormDialogOpen(false);
+    await fetchServices();
+  } catch (error) {
+    console.error("Submit Error:", error);
+    toast.error(error instanceof Error ? error.message : "An unknown error occurred.", { id: toastId });
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
 
   const handleDeleteConfirm = async () => {
     if (!deletingService) return;
