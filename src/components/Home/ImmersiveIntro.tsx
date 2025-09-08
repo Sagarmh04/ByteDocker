@@ -128,7 +128,7 @@ export function ImmersiveIntro() {
                   About Us
                 </GlowingButton>
                 <GlowingButton href="/projects" title="Projects">
-                  Projects
+                  Our Projects
                 </GlowingButton>
               </div>
             </motion.div>
