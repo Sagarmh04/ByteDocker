@@ -127,8 +127,8 @@ export function ImmersiveIntro() {
                 <GlowingButton href="/about" title="About">
                   About Us
                 </GlowingButton>
-                <GlowingButton href="/contact" title="Contact">
-                  Contact Us
+                <GlowingButton href="/projects" title="Projects">
+                  Projects
                 </GlowingButton>
               </div>
             </motion.div>

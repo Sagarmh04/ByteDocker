@@ -1,16 +1,20 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  // ADD THIS ENTIRE 'images' SECTION
   images: {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'firebasestorage.googleapis.com',
+        hostname: '**',
       },
+      
+      // 👇 wildcard example (if you want to allow any HTTPS domain)
+      // {
+      //   protocol: 'https',
+      //   hostname: '**',
+      // },
     ],
   },
-  // ... you might have other configurations here. Leave them as they are.
 };
 
 export default nextConfig;
