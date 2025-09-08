@@ -49,7 +49,20 @@ const colorPalettes = {
 const PROJECTS_PER_PAGE = 6;
 
 // --- Project Card Component ---
-const ProjectCard = ({ project, colors, onClick }: { project: Project; colors: any; onClick: () => void; }) => {
+interface Colors {
+  cardBg: string;
+  accent: string;
+}
+
+const ProjectCard = ({
+  project,
+  colors,
+  onClick,
+}: {
+  project: Project;
+  colors: Colors;
+  onClick: () => void;
+}) => {
   const firstContent = (
     <div className="relative w-full h-full">
         {/* Replaced Next/Image with standard img tag */}
@@ -211,7 +224,7 @@ export default function ProjectsPage() {
 
         <div ref={loaderRef} className="text-center py-10">
           {loading && <p>Loading more...</p>}
-          {!hasMore && projects.length > 0 && <p>You've seen all our work!</p>}
+          {!hasMore && projects.length > 0 && <p>You have seen all our work!</p>}
           {hasMore && <p>Loading more projects...</p>}
           {!hasMore && <p>You have reached the end!</p>}
         </div>
