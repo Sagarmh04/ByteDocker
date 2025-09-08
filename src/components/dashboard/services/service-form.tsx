@@ -1,3 +1,5 @@
+// FILE: components/dashboard/services/service-form.tsx
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,14 +19,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { ChangeEvent, useState } from "react";
 import Image from "next/image";
 import { toast } from "sonner";
-import { Service } from "@/app/dashboard/services/page"; // Point to the new location of the type
+import { Service } from "@/app/dashboard/services/page"; // Point to the new location of the type 
 
-// Define a schema for what the form itself will handle
+// FIX: Added .max(500) to the description validation
 const formSchema = z.object({
   title: z.string().min(1, "Title is required."),
   alt: z.string().min(1, "Alt text is required."),
-  description: z.string().min(1, "Description is required."),
-  // Add image to the schema for validation context
+  description: z
+    .string()
+    .min(1, "Description is required.")
+    .max(500, "Description cannot exceed 500 characters."),
   image: z.any(),
 });
 
@@ -48,6 +52,9 @@ export function ServiceForm({ mode, initialData, onSubmit, isSubmitting }: Servi
     },
   });
 
+  // FIX: Watch the description field to update the character counter
+  const descriptionValue = form.watch("description");
+
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
@@ -60,7 +67,7 @@ export function ServiceForm({ mode, initialData, onSubmit, isSubmitting }: Servi
             toast.error("Image must be portrait (width < height).");
             setPreview(initialData?.src || null);
             setImageFile(undefined);
-            e.target.value = ''; // Reset file input
+            e.target.value = '';
           } else {
             setPreview(event.target?.result as string);
             setImageFile(file);
@@ -84,7 +91,6 @@ export function ServiceForm({ mode, initialData, onSubmit, isSubmitting }: Servi
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* IMAGE FIELD */}
           <div className="md:col-span-1">
             <FormField
               control={form.control}
@@ -105,10 +111,7 @@ export function ServiceForm({ mode, initialData, onSubmit, isSubmitting }: Servi
               )}
             />
           </div>
-
-          {/* TEXT FIELDS */}
           <div className="md:col-span-2 space-y-4">
-            {/* TITLE FIELD */}
             <FormField
               control={form.control}
               name="title"
@@ -122,8 +125,6 @@ export function ServiceForm({ mode, initialData, onSubmit, isSubmitting }: Servi
                 </FormItem>
               )}
             />
-            
-            {/* ALT TEXT FIELD */}
             <FormField
               control={form.control}
               name="alt"
@@ -137,8 +138,6 @@ export function ServiceForm({ mode, initialData, onSubmit, isSubmitting }: Servi
                 </FormItem>
               )}
             />
-
-            {/* DESCRIPTION FIELD */}
             <FormField
               control={form.control}
               name="description"
@@ -149,6 +148,10 @@ export function ServiceForm({ mode, initialData, onSubmit, isSubmitting }: Servi
                     <Textarea rows={5} placeholder="Describe the service..." {...field} />
                   </FormControl>
                   <FormMessage />
+                  {/* FIX: Added character counter */}
+                  <div className="text-right text-sm text-muted-foreground">
+                    {descriptionValue?.length || 0} / 500
+                  </div>
                 </FormItem>
               )}
             />

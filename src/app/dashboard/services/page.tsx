@@ -265,10 +265,10 @@ export default function ServicesPage() {
       </Dialog>
 
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700">
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-            <AlertDialogDescription>This action cannot be undone. This will permanently delete the service titled "{deletingService?.title}".</AlertDialogDescription>
+            <AlertDialogDescription>This action cannot be undone. This will permanently delete the service titled {deletingService?.title}.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
