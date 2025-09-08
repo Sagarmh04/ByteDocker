@@ -12,6 +12,11 @@ const PRELOADER_EXIT_SPEED = 2500;
 export function Preloader() {
   const [isLoading, setIsLoading] = useState(true)
   const { resolvedTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const preloaderColors = {
     light: {
@@ -27,31 +32,33 @@ export function Preloader() {
   const currentColors = resolvedTheme === 'dark' ? preloaderColors.dark : preloaderColors.light
 
   useEffect(() => {
+    if (!mounted) return
     if (sessionStorage.getItem("visited")) {
       setIsLoading(false)
       return
     }
 
-    // Timer now waits for the text animation to complete before starting the exit
     const timer = setTimeout(() => {
       setIsLoading(false)
       sessionStorage.setItem("visited", "true")
     }, TEXT_ANIMATION_DURATION)
 
     return () => clearTimeout(timer)
-  }, [])
+  }, [mounted])
 
   const slideUp: Variants = {
     initial: { y: 0 },
-    // The exit transition now uses the speed variable
     exit: {
       y: "-100%",
       transition: {
-        duration: PRELOADER_EXIT_SPEED / 1000, // Convert ms to seconds for Framer Motion
+        duration: PRELOADER_EXIT_SPEED / 1000,
         ease: [0.76, 0, 0.24, 1],
       },
     },
   }
+
+  // Only render after mounted to avoid hydration mismatch
+  if (!mounted) return null
 
   return (
     <AnimatePresence>

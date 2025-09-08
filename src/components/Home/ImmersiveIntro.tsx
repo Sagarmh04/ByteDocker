@@ -24,16 +24,19 @@ const componentColors = {
 // --- MAIN COMPONENT ---
 export function ImmersiveIntro() {
   const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
   const targetRef = useRef<HTMLDivElement | null>(null);
+  const [mouse, setMouse] = useState<{ x: number; y: number } | null>(null);
 
-  // Scroll-based transforms (for desktop parallax)
+  // --- Always call hooks at the top ---
   const { scrollYProgress } = useScroll({
     target: targetRef,
     offset: ["start start", "end start"],
   });
-
   const textY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
   const backgroundScale = useTransform(scrollYProgress, [0, 1], [1, 1.15]);
+
+  useEffect(() => setMounted(true), []);
 
   const currentColors =
     resolvedTheme === "dark" ? componentColors.dark : componentColors.light;
@@ -70,55 +73,75 @@ export function ImmersiveIntro() {
       `}</style>
 
       {/* Desktop View */}
-      <section ref={targetRef} className="relative hidden h-screen sm:block">
-        <div className="sticky top-0 flex h-full items-center justify-center overflow-hidden">
-          {/* Background with parallax */}
-          <motion.div
-            style={{ backgroundImage, scale: backgroundScale }}
-            className="absolute inset-0 z-0 bg-cover bg-center"
-          >
-            <div className="absolute inset-0 bg-black/40"></div>
-          </motion.div>
+      <section
+        ref={targetRef}
+        className="relative hidden h-screen sm:block"
+        onMouseMove={e => {
+          const rect = e.currentTarget.getBoundingClientRect();
+          setMouse({
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top,
+          });
+        }}
+        onMouseLeave={() => setMouse(null)}
+      >
+        {/* Only render content after mounted */}
+        {mounted ? (
+          <div className="sticky top-0 flex h-full items-center justify-center overflow-hidden">
+            {/* Background with parallax */}
+            <motion.div
+              style={{
+                backgroundImage,
+                scale: backgroundScale,
+              }}
+              className="absolute inset-0 z-0 bg-cover bg-center"
+            >
+              <div className="absolute inset-0 bg-black/40"></div>
+            </motion.div>
 
-          {/* Foreground text */}
-          <motion.div
-            style={{ y: textY }}
-            className="relative z-20 text-center px-8"
-          >
-            <div className="mx-auto max-w-4xl text-white">
-              <HoverSpotlightHeading text={headingText} />
+            {/* Foreground text */}
+            <motion.div
+              style={{ y: textY }}
+              className="relative z-20 text-center px-8"
+            >
+              <div className="mx-auto max-w-4xl text-white">
+                <HoverSpotlightHeading text={headingText} mouse={mouse} />
 
-              <h4
-                className="text-4xl leading-tight drop-shadow-lg"
-                style={{ fontFamily: "'Quicksand Medium', sans-serif" }}
-              >
-                {headingText2}
-              </h4>
+                <h4
+                  className="text-4xl leading-tight drop-shadow-lg"
+                  style={{ fontFamily: "'Quicksand Medium', sans-serif" }}
+                >
+                  {headingText2}
+                </h4>
 
-              <p
-                className="mt-8 text-lg leading-relaxed text-neutral-200 drop-shadow-md"
-                style={{ fontFamily: "'Quicksand Medium', sans-serif" }}
-              >
-                {captionText}
-              </p>
+                <p
+                  className="mt-8 text-lg leading-relaxed text-neutral-200 drop-shadow-md"
+                  style={{ fontFamily: "'Quicksand Medium', sans-serif" }}
+                >
+                  {captionText}
+                </p>
+              </div>
+
+              {/* Buttons */}
+              <div className="mt-12 flex flex-col items-center gap-4 sm:flex-row justify-center">
+                <GlowingButton href="/about" title="About">
+                  About Us
+                </GlowingButton>
+                <GlowingButton href="/contact" title="Contact">
+                  Contact Us
+                </GlowingButton>
+              </div>
+            </motion.div>
+
+            {/* Marquee */}
+            <div className="pointer-events-none absolute bottom-10 left-0 z-10 w-full">
+              <MarqueeText color={currentColors.text} />
             </div>
-
-            {/* Buttons */}
-            <div className="mt-12 flex flex-col items-center gap-4 sm:flex-row justify-center">
-              <GlowingButton href="/about" title="About">
-                About Us
-              </GlowingButton>
-              <GlowingButton href="/contact" title="Contact">
-                Contact Us
-              </GlowingButton>
-            </div>
-          </motion.div>
-
-          {/* Marquee */}
-          <div className="pointer-events-none absolute bottom-10 left-0 z-10 w-full">
-            <MarqueeText color={currentColors.text} />
           </div>
-        </div>
+        ) : (
+          // Optionally, render a placeholder to keep height
+          <div className="relative h-screen w-full" />
+        )}
       </section>
 
       {/* Mobile View */}
@@ -277,7 +300,13 @@ const MarqueeText = ({ color }: { color: string }) => {
   );
 };
 
-function HoverSpotlightHeading({ text }: { text: string }) {
+function HoverSpotlightHeading({
+  text,
+  mouse,
+}: {
+  text: string;
+  mouse?: { x: number; y: number } | null;
+}) {
   const { resolvedTheme } = useTheme();
   const containerRef = useRef<HTMLHeadingElement | null>(null);
   const overlayRef = useRef<HTMLSpanElement | null>(null);
@@ -294,6 +323,19 @@ function HoverSpotlightHeading({ text }: { text: string }) {
       setBaseColor("#FFFFFF");
     }
   }, [resolvedTheme]);
+
+  useEffect(() => {
+    const overlay = overlayRef.current;
+    if (!overlay) return;
+
+    if (mouse) {
+      overlay.style.setProperty("--x", `${mouse.x}px`);
+      overlay.style.setProperty("--y", `${mouse.y}px`);
+    } else {
+      overlay.style.setProperty("--x", `-9999px`);
+      overlay.style.setProperty("--y", `-9999px`);
+    }
+  }, [mouse]);
 
   useEffect(() => {
     const el = containerRef.current;
