@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import Image from "next/image";
-
+import { Checkbox } from "@/components/ui/checkbox"
 // Firebase imports — adjust path if your firebase client utilities live elsewhere
 import {
   collection,
@@ -24,7 +24,6 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import Input from "@/components/ui/input2";
 import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
 
 interface Card {
   id: string;
@@ -372,12 +371,14 @@ function EditServiceDialog({ id, onClose, logos, refetchLogos }: { id: string; o
 
   return (
     <Dialog open={true} onOpenChange={() => onClose()}>
-      <DialogContent className="sm:max-w-lg bg-white dark:bg-neutral-900 shadow-lg rounded-xl">
-        <DialogHeader>
-          <DialogTitle>Edit Service — {id}</DialogTitle>
-        </DialogHeader>
+<DialogContent className="sm:max-w-lg bg-white dark:bg-neutral-900 shadow-lg rounded-xl p-0">
+  <DialogHeader className="px-6 pt-4">
+    <DialogTitle>Edit Service — {id}</DialogTitle>
+  </DialogHeader>
 
-<div className="space-y-4 py-2">
+  {/* Scrollable Body */}
+  <div className="max-h-[80vh] overflow-y-auto px-6 pb-6 scrollbar-thin scrollbar-thumb-neutral-400 dark:scrollbar-thumb-neutral-700 hover:scrollbar-thumb-neutral-500 dark:hover:scrollbar-thumb-neutral-600">
+    <div className="space-y-4 py-2">
   {/* --- Thumbnail --- */}
   <div>
     <label className="block mb-1 font-medium">Thumbnail (required)</label>
@@ -454,29 +455,39 @@ function EditServiceDialog({ id, onClose, logos, refetchLogos }: { id: string; o
     </div>
   </div>
 
-  {/* --- Tech Stack --- */}
-  <div>
-    <label className="block mb-1 font-medium">Tech stack (choose logos)</label>
-    <div className="grid grid-cols-3 gap-2">
-      {(logos ?? []).map((l) => (
+
+
+<div>
+  <label className="block mb-1 font-medium">Tech stack (choose logos)</label>
+  <div className="grid grid-cols-3 gap-3">
+    {(logos ?? []).map((l) => {
+      // Use Firestore doc id OR fall back to title
+      const logoId = l.id ?? l.title;
+
+      return (
         <label
-          key={l.id}
-          className="flex items-center gap-2 border p-2 rounded"
+          key={logoId}
+          className="flex items-center gap-2 border p-2 rounded cursor-pointer"
         >
-          <input
-            type="checkbox"
-            checked={(selectedTech ?? []).includes(l.id)}
-            onChange={() => toggleTech(l.id)}
+          <Checkbox
+            checked={(selectedTech ?? []).includes(logoId)}
+            onCheckedChange={() => toggleTech(logoId)}
           />
-          <div className="w-8 h-8 relative overflow-hidden">
+          <div className="w-8 h-8 relative overflow-hidden rounded">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={l.url} alt={l.id} className="object-cover w-full h-full" />
+            <img
+              src={l.url}
+              alt={l.title}
+              className="object-cover w-full h-full"
+            />
           </div>
-          <div className="text-sm">{l.id}</div>
+          <div className="text-sm">{l.title}</div>
         </label>
-      ))}
-    </div>
+      );
+    })}
   </div>
+</div>
+
 
   {/* --- Description --- */}
   <div>
@@ -503,7 +514,7 @@ function EditServiceDialog({ id, onClose, logos, refetchLogos }: { id: string; o
     </Button>
   </div>
 </div>
-
+</div>
       </DialogContent>
     </Dialog>
   );
