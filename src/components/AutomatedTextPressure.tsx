@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-// ... (interface and easing function remain the same) ...
 interface AutomatedTextPressureProps {
   text: string;
   textColor: string;
@@ -16,6 +15,7 @@ const AutomatedTextPressure: React.FC<AutomatedTextPressureProps> = ({
   textColor,
   duration = 2000,
 }) => {
+  const [mounted, setMounted] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const titleRef = useRef<HTMLHeadingElement | null>(null);
   const spansRef = useRef<(HTMLSpanElement | null)[]>([]);
@@ -24,7 +24,6 @@ const AutomatedTextPressure: React.FC<AutomatedTextPressureProps> = ({
   const [fontSize, setFontSize] = useState(24);
   const chars = text.split('');
 
-  // ... (dist function and other effects remain the same) ...
   const dist = (a: { x: number; y: number }, b: { x: number; y: number }) => {
     const dx = b.x - a.x;
     const dy = b.y - a.y;
@@ -32,6 +31,11 @@ const AutomatedTextPressure: React.FC<AutomatedTextPressureProps> = ({
   };
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
     const setSize = () => {
       if (!containerRef.current || !titleRef.current) return;
       const { width: containerW } = containerRef.current.getBoundingClientRect();
@@ -42,9 +46,10 @@ const AutomatedTextPressure: React.FC<AutomatedTextPressureProps> = ({
     setSize();
     window.addEventListener('resize', setSize);
     return () => window.removeEventListener('resize', setSize);
-  }, [text]);
+  }, [text, mounted]);
 
   useEffect(() => {
+    if (!mounted) return;
     let animationFrameId: number;
     const startTime = performance.now();
 
@@ -85,10 +90,11 @@ const AutomatedTextPressure: React.FC<AutomatedTextPressureProps> = ({
 
     animate();
     return () => cancelAnimationFrame(animationFrameId);
-  }, [duration, fontSize]);
+  }, [duration, fontSize, mounted]);
+
+  if (!mounted) return null;
 
   return (
-    // The only change is removing height: '100%' to fix centering
     <div ref={containerRef} style={{ width: '100%' }}>
       <style>{`
         @font-face {

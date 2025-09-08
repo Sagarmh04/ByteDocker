@@ -9,6 +9,7 @@ import { SmoothScroller } from "@/components/SmoothScroller"
 import { Preloader } from "@/components/Preloader"
 import { LenisProvider } from "@/context/LenisContext"
 import { MotionProvider } from "@/context/MotionContext"
+import { Toaster } from '@/components/ui/toaster'
 
 export const metadata: Metadata = {
   title: {
@@ -45,6 +46,7 @@ export default function RootLayout({
             </AnimationProvider>
           </MotionProvider>
         </ThemeProvider>
+        <Toaster />
       </body>
     </html>
   )
