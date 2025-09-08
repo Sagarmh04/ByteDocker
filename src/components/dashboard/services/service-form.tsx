@@ -24,12 +24,9 @@ const formSchema = z.object({
   title: z.string().min(1, "Title is required."),
   alt: z.string().min(1, "Alt text is required."),
   description: z.string().min(1, "Description is required."),
+  // Add image to the schema for validation context
+  image: z.any(),
 });
-
-// Create separate schemas for the image field validation
-const imageRequired = z.custom<FileList>().refine((files) => files?.length === 1, "Image is required.");
-const imageOptional = z.custom<FileList>().optional();
-
 
 interface ServiceFormProps {
   mode: "create" | "update";
@@ -55,13 +52,6 @@ export function ServiceForm({ mode, initialData, onSubmit, isSubmitting }: Servi
     const files = e.target.files;
     if (files && files.length > 0) {
       const file = files[0];
-      // Image validation
-      const validationResult = (mode === 'create' ? imageRequired : imageOptional).safeParse(files);
-      if (!validationResult.success) {
-          toast.error(validationResult.error.issues[0].message);
-          return;
-      }
-
       const reader = new FileReader();
       reader.onload = (event) => {
         const img = document.createElement("img");
@@ -94,30 +84,80 @@ export function ServiceForm({ mode, initialData, onSubmit, isSubmitting }: Servi
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* IMAGE FIELD */}
           <div className="md:col-span-1">
-            <FormItem>
-                <FormLabel>Thumbnail Image</FormLabel>
-                {preview && (
-                <div className="mb-4 aspect-[3/4] relative w-full overflow-hidden rounded-md border">
-                    <Image src={preview} alt="Preview" fill className="object-cover" />
-                </div>
-                )}
-                <FormControl>
+            <FormField
+              control={form.control}
+              name="image"
+              render={() => (
+                <FormItem>
+                  <FormLabel>Thumbnail Image</FormLabel>
+                  {preview && (
+                    <div className="mb-4 aspect-[3/4] relative w-full overflow-hidden rounded-md border">
+                      <Image src={preview} alt="Preview" fill className="object-cover" />
+                    </div>
+                  )}
+                  <FormControl>
                     <Input type="file" accept="image/*" onChange={handleImageChange} />
-                </FormControl>
-                <FormMessage>{form.formState.errors.title?.message}</FormMessage>
-            </FormItem>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
+
+          {/* TEXT FIELDS */}
           <div className="md:col-span-2 space-y-4">
-            <FormField control={form.control} name="title" render={({ field }) => ( <FormItem> <FormLabel>Title</FormLabel> <FormControl> <Input placeholder="e.g., IT Consultation" {...field} /> </FormControl> <FormMessage /> </FormItem> )}/>
-            <FormField control={form.control} name="alt" render={({ field }) => ( <FormItem> <FormLabel>Alt Text</FormLabel> <FormControl> <Input placeholder="Image alt text for accessibility" {...field} /> </FormControl> <FormMessage /> </FormItem> )}/>
-            <FormField control={form.control} name="description" render={({ field }) => ( <FormItem> <FormLabel>Description</FormLabel> <FormControl> <Textarea rows={5} placeholder="Describe the service..." {...field} /> </FormControl> <FormMessage /> </FormItem> )}/>
+            {/* TITLE FIELD */}
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Title</FormLabel>
+                  <FormControl>
+                    <Input placeholder="e.g., IT Consultation" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            {/* ALT TEXT FIELD */}
+            <FormField
+              control={form.control}
+              name="alt"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Alt Text</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Image alt text for accessibility" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* DESCRIPTION FIELD */}
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea rows={5} placeholder="Describe the service..." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
         </div>
         <div className="flex justify-end">
-            <Button type="submit" disabled={isSubmitting}>
+          <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? "Saving..." : mode === "create" ? "Create Service" : "Save Changes"}
-            </Button>
+          </Button>
         </div>
       </form>
     </Form>

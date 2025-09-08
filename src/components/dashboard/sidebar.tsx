@@ -1,36 +1,37 @@
-// components/dashboard/sidebar.tsx
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { ChevronsLeft, ChevronsRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { SidebarNav } from "./sidebar-nav";
 
-const links = [
-  { href: "/dashboard/services", label: "Services" },
-  { href: "/dashboard/clients", label: "Clients" },
-  { href: "/dashboard/projects", label: "Projects" },
-];
+export function Sidebar() {
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
-export default function Sidebar() {
-  const pathname = usePathname();
+  const toggleSidebar = () => {
+    setIsCollapsed(!isCollapsed);
+  };
 
   return (
-    <aside className="w-64 bg-white border-r shadow-sm flex flex-col">
-      <div className="p-4 font-bold text-xl border-b">Admin Dashboard</div>
-      <nav className="flex-1 p-2">
-        {links.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className={cn(
-              "block px-3 py-2 rounded-md hover:bg-gray-100",
-              pathname === link.href && "bg-gray-200 font-medium"
-            )}
-          >
-            {link.label}
-          </Link>
-        ))}
-      </nav>
+    <aside
+      className={cn(
+        "relative hidden h-screen flex-col border-r bg-background transition-all duration-300 ease-in-out md:flex",
+        isCollapsed ? "w-20" : "w-64"
+      )}
+    >
+      <div className="flex h-16 shrink-0 items-center border-b px-6">
+        <h2 className={cn("text-lg font-semibold", isCollapsed && "sr-only")}>Admin Panel</h2>
+      </div>
+      <div className="flex-1 overflow-y-auto">
+        <SidebarNav isCollapsed={isCollapsed} />
+      </div>
+      <div className="mt-auto border-t p-2">
+        <Button onClick={toggleSidebar} variant="ghost" size="icon" className="h-10 w-full">
+          {isCollapsed ? <ChevronsRight className="h-5 w-5" /> : <ChevronsLeft className="h-5 w-5" />}
+          <span className="sr-only">Toggle Sidebar</span>
+        </Button>
+      </div>
     </aside>
   );
 }
