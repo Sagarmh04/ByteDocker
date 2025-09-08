@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
-import { Service } from "@/app/dashboard/services/page";
+import { Service } from "./ServicesOverview";
 
 interface ServiceCardProps {
   service: Service;

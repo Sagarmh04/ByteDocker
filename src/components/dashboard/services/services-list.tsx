@@ -1,6 +1,6 @@
 import { Loader2 } from "lucide-react";
 import { ServiceCard } from "./service-card";
-import { Service } from "@/app/dashboard/services/page";
+import { Service } from "./ServicesOverview";
 
 interface ServicesListProps {
   services: Service[];

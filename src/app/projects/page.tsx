@@ -24,27 +24,28 @@ interface Project {
   description: string;
 }
 
-// --- Theme-based Color Palettes ---
+// --- Theme-based Bold + Pastel Palettes ---
 const colorPalettes = {
   light: {
-    bg: 'bg-slate-50',
-    text: 'text-slate-900',
-    cardBg: 'bg-white',
-    accent: 'text-cyan-600',
-    muted: 'text-slate-600',
-    navBg: 'bg-white/80 backdrop-blur-sm',
-    footerBg: 'bg-slate-100',
+    bg: 'bg-white',                  // pure bright white
+    text: 'text-black',              // deep black text
+    cardBg: 'bg-pink-100',           // soft pastel card background
+    accent: 'text-blue-500',         // pastel but vibrant accent
+    muted: 'text-gray-600',          // muted for secondary info
+    navBg: 'bg-white/90 backdrop-blur-md',
+    footerBg: 'bg-gray-100',         // slightly off-white footer
   },
   dark: {
-    bg: 'bg-gray-900',
-    text: 'text-gray-100',
-    cardBg: 'bg-gray-800',
-    accent: 'text-cyan-400',
-    muted: 'text-gray-400',
-    navBg: 'bg-gray-900/80 backdrop-blur-sm',
-    footerBg: 'bg-gray-800',
+    bg: 'bg-black',                  // true pitch black
+    text: 'text-white',              // crisp bright white
+    cardBg: 'bg-gray-800',           // deep gray with subtle contrast
+    accent: 'text-pink-400',         // pastel pop accent
+    muted: 'text-gray-400',          // muted gray for secondary
+    navBg: 'bg-black/80 backdrop-blur-md',
+    footerBg: 'bg-gray-900',         // slightly lighter than bg
   },
 };
+
 
 const PROJECTS_PER_PAGE = 6;
 

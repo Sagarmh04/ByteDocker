@@ -217,8 +217,8 @@ function MobileView() {
           <GlowingButton href="/about" title="About">
             About Us
           </GlowingButton>
-          <GlowingButton href="/contact" title="Contact">
-            Contact Us
+          <GlowingButton href="/projects" title="Projects">
+            Our Projects
           </GlowingButton>
         </motion.div>
       </motion.div>

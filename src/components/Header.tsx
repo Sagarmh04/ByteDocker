@@ -43,6 +43,7 @@ export function Header() {
     { name: "Clients", href: "/clients" },
     { name: "About", href: "/about" },
     { name: "Contact", href: "/contact" },
+    { name: "Projects", href: "/projects" },
   ]
 
   useEffect(() => {

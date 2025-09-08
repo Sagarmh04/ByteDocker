@@ -19,7 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ChangeEvent, useState } from "react";
 import Image from "next/image";
 import { toast } from "sonner";
-import { Service } from "@/app/dashboard/services/page"; // Point to the new location of the type 
+import { Service } from "./ServicesOverview"; // Point to the new location of the type
 
 // FIX: Added .max(500) to the description validation
 const formSchema = z.object({
