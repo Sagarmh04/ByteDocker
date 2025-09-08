@@ -9,10 +9,11 @@ import { toast } from "sonner";
 
 interface AdminLoginModalProps {
   open: boolean;
-  onClose: () => void;
+  onOpenChange: (open: boolean) => void;
 }
 
-export default function AdminLoginModal({ open, onClose }: AdminLoginModalProps) {
+
+export default function AdminLoginModal({ open, onOpenChange }: AdminLoginModalProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -68,7 +69,8 @@ export default function AdminLoginModal({ open, onClose }: AdminLoginModalProps)
   }
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+
       <DialogContent className="sm:max-w-md bg-gray-900 text-gray-100 p-8 rounded-2xl shadow-2xl border border-gray-700">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold text-center text-white">

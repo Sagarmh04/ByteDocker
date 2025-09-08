@@ -205,7 +205,7 @@ export function ClientsView() {
                         <CardTitle className="text-lg font-semibold">{client.companyName}</CardTitle>
                       </CardHeader>
                       <CardContent className="flex-grow">
-                        <p className="italic opacity-80">"{client.feedback.message}"</p>
+                        <p className="italic opacity-80">{client.feedback.message}</p>
                       </CardContent>
                       <CardFooter>
                         <div className="flex items-center space-x-1">

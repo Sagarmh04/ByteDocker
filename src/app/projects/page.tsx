@@ -212,6 +212,8 @@ export default function ProjectsPage() {
         <div ref={loaderRef} className="text-center py-10">
           {loading && <p>Loading more...</p>}
           {!hasMore && projects.length > 0 && <p>You've seen all our work!</p>}
+          {hasMore && <p>Loading more projects...</p>}
+          {!hasMore && <p>You have reached the end!</p>}
         </div>
       </main>
       
