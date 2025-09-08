@@ -142,7 +142,7 @@ export default function ProjectsPage() {
         {/* --- Loader for Infinite Scroll --- */}
         <div ref={loaderRef} className="text-center py-10">
           {hasMore && <p>Loading more projects...</p>}
-          {!hasMore && <p>You've reached the end!</p>}
+          {!hasMore && <p>You have reached the end!</p>}
         </div>
       </main>
 
