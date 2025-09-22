@@ -212,9 +212,11 @@ const AboutPage: NextPage = () => {
                   <Image
                     src={member.imageUrl} 
                     alt={member.name} 
+                    width={50}
+                    height={50}
                     style={{ 
-                      width: '50px', 
-                      height: '50px', 
+                      // width: '50px', 
+                      // height: '50px', 
                       borderRadius: '50%', 
                       objectFit: 'cover', 
                       marginRight: '1rem',
