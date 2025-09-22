@@ -80,7 +80,7 @@ export default function ContactPage() {
           <p className="text-sm font-medium text-gray-600 dark:text-gray-300">management@bytedocker.com</p>
           <div className="flex items-center space-x-4">
             <a
-              href="https://www.instagram.com/your_username_here" // Your Instagram URL
+              href="https://www.instagram.com/bytedocker/"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Instagram"
@@ -89,7 +89,7 @@ export default function ContactPage() {
               <FaInstagram size={22} />
             </a>
             <a
-              href="https://www.linkedin.com/in/your_profile_here" // Your LinkedIn URL
+              href="https://www.linkedin.com/company/bytedocker/" // Your LinkedIn URL
               target="_blank"
               rel="noopener noreferrer"
               aria-label="LinkedIn"
