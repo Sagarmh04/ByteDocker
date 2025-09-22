@@ -3,6 +3,7 @@
 import type { NextPage } from 'next';
 import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
+import Image from 'next/image';
 
 // --- Helper Icon Components ---
 const MapPinIcon = ({ color }: { color: string }) => (
@@ -161,7 +162,7 @@ const AboutPage: NextPage = () => {
           <div style={{ backgroundColor: currentTheme.card, border: `1px solid ${currentTheme.border}`, borderRadius: '0.75rem', padding: '2rem' }}>
             <h2 style={{ color: currentTheme.accent1, fontSize: '1.875rem', fontWeight: '700', marginBottom: '1rem' }}>Our Mission</h2>
             <p style={{ color: currentTheme.textSecondary, lineHeight: '1.75' }}>
-              To deliver high-quality, affordable technology solutions that address our client's unique needs, combining technical expertise with a deep understanding of industry trends to create products that are both functional and future-ready.
+              To deliver high-quality, affordable technology solutions that address our clients unique needs, combining technical expertise with a deep understanding of industry trends to create products that are both functional and future-ready.
             </p>
           </div>
           <div style={{ backgroundColor: currentTheme.card, border: `1px solid ${currentTheme.border}`, borderRadius: '0.75rem', padding: '2rem' }}>
@@ -208,7 +209,7 @@ const AboutPage: NextPage = () => {
                     transition: 'background-color 0.3s' 
                   }}
                 >
-                  <img 
+                  <Image
                     src={member.imageUrl} 
                     alt={member.name} 
                     style={{ 
