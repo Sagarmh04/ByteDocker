@@ -5,19 +5,19 @@ import { AnimatedLink } from "../AnimatedLink";
 import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
 
-// --- Color Configuration ---
+// --- Color Configuration (Updated) ---
 const componentColors = {
   light: {
     text: "#111111",
     subtleText: "#4B5563",
     glow: "#4169E1",
-    image: "/Background/LightThemeHomeHeroBackground.PNG",
+    video: "/Background/LightDesign.mp4", // Path to your light theme video
   },
   dark: {
     text: "#FFFFFF",
     subtleText: "#9CA3AF",
     glow: "#FFD300",
-    image: "/Background/DarkThemeHomeHeroBackground.JPG",
+    video: "/Background/DarkDesign.mp4", // Path to your dark theme video
   },
 };
 
@@ -28,7 +28,6 @@ export function ImmersiveIntro() {
   const targetRef = useRef<HTMLDivElement | null>(null);
   const [mouse, setMouse] = useState<{ x: number; y: number } | null>(null);
 
-  // --- Always call hooks at the top ---
   const { scrollYProgress } = useScroll({
     target: targetRef,
     offset: ["start start", "end start"],
@@ -40,7 +39,6 @@ export function ImmersiveIntro() {
 
   const currentColors =
     resolvedTheme === "dark" ? componentColors.dark : componentColors.light;
-  const backgroundImage = `url(${currentColors.image})`;
 
   const headingText = "Welcome to Bytedocker";
   const headingText2 =
@@ -85,17 +83,23 @@ export function ImmersiveIntro() {
         }}
         onMouseLeave={() => setMouse(null)}
       >
-        {/* Only render content after mounted */}
         {mounted ? (
           <div className="sticky top-0 flex h-full items-center justify-center overflow-hidden">
-            {/* Background with parallax */}
+            {/* Background video with parallax (Updated) */}
             <motion.div
-              style={{
-                backgroundImage,
-                scale: backgroundScale,
-              }}
-              className="absolute inset-0 z-0 bg-cover bg-center"
+              style={{ scale: backgroundScale }}
+              className="absolute inset-0 z-0"
             >
+              <video
+                key={currentColors.video} // Add key to force re-render on theme change
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="absolute h-full w-full object-cover"
+              >
+                <source src={currentColors.video} type="video/mp4" />
+              </video>
               <div className="absolute inset-0 bg-black/40"></div>
             </motion.div>
 
@@ -139,7 +143,6 @@ export function ImmersiveIntro() {
             </div>
           </div>
         ) : (
-          // Optionally, render a placeholder to keep height
           <div className="relative h-screen w-full" />
         )}
       </section>
@@ -174,12 +177,19 @@ function MobileView() {
 
   return (
     <section className="relative flex h-screen w-full flex-col justify-center overflow-hidden sm:hidden">
-      {/* Static background */}
-      <div
-        className="absolute inset-0 z-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${currentConfig.image})` }}
-      >
-        <div className="absolute inset-0 bg-black/40"></div>
+      {/* Background video (Updated) */}
+      <div className="absolute inset-0 z-0">
+          <video
+              key={currentConfig.video} // Add key to force re-render
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="absolute h-full w-full object-cover"
+          >
+              <source src={currentConfig.video} type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 bg-black/40"></div>
       </div>
 
       {/* Animated text content */}
@@ -208,7 +218,6 @@ function MobileView() {
           {semiCaption}
         </motion.p>
         
-
         {/* Buttons */}
         <motion.div
           variants={FADE_UP_VARIANTS}
@@ -231,7 +240,7 @@ function MobileView() {
   );
 }
 
-// --- HELPER COMPONENTS ---
+// --- HELPER COMPONENTS (No changes needed below this line) ---
 const GlowingButton = ({
   href,
   title,

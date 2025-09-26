@@ -3,7 +3,6 @@
 import type { NextPage } from 'next';
 import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
-import Image from 'next/image';
 
 // --- Helper Icon Components ---
 const MapPinIcon = ({ color }: { color: string }) => (
@@ -32,6 +31,7 @@ const AboutPage: NextPage = () => {
   const [mounted, setMounted] = useState(false);
   const [activeMemberIndex, setActiveMemberIndex] = useState(0);
   const [isDesktop, setIsDesktop] = useState(false);
+  const [mapType, setMapType] = useState('m'); // 'm' for map, 'k' for satellite
 
   // --- Theme Colors ---
   const colors = {
@@ -46,7 +46,7 @@ const AboutPage: NextPage = () => {
       border: '#e2e8f0'
     },
     dark: {
-      background: '#010101',
+      background: '#111827',
       card: '#1f2937',
       textPrimary: '#f9fafb',
       textSecondary: '#9ca3af',
@@ -103,40 +103,45 @@ const AboutPage: NextPage = () => {
     }
   ];
 
-  // --- Map Locations (Using OpenStreetMap) ---
+  // --- Map Locations with Coordinates for better accuracy ---
   const locations = [
     {
       name: 'Corporate Office 1',
       address: 'Residency Road, Bengaluru 560025',
-      embedUrl: "https://www.openstreetmap.org/export/embed.html?bbox=77.6035,12.9670,77.6135,12.9770&layer=mapnik&marker=12.9720,77.6085"
+      lat: 12.9720,
+      lon: 77.6085
     },
     {
       name: 'Corporate Office 2',
       address: 'Bull Temple Road, Basavanagudi, Bengaluru 560019',
-      embedUrl: "https://www.openstreetmap.org/export/embed.html?bbox=77.5650,12.9370,77.5750,12.9470&layer=mapnik&marker=12.9420,77.5700"
+      lat: 12.9420,
+      lon: 77.5700
     },
     {
       name: 'Registered Office',
       address: 'Kanakapura Road, Bengaluru 560062',
-      embedUrl: "https://www.openstreetmap.org/export/embed.html?bbox=77.5550,12.8950,77.5650,12.9050&layer=mapnik&marker=12.9000,77.5600"
+      lat: 12.9000,
+      lon: 77.5600
     }
   ];
 
-  const [activeMapUrl, setActiveMapUrl] = useState(locations[0].embedUrl);
+  const [activeLocation, setActiveLocation] = useState(locations[0]);
+
+  // Dynamically create the map URL based on the active location and map type
+  const mapEmbedUrl = `https://maps.google.com/maps?q=${activeLocation.lat},${activeLocation.lon}&t=${mapType}&z=15&ie=UTF8&iwloc=&output=embed`;
 
   // --- Effects ---
   useEffect(() => {
     setMounted(true);
 
-    // FIX: Check screen size for responsive styles
     const handleResize = () => {
-      setIsDesktop(window.innerWidth >= 768); // 768px is a common breakpoint for 'md'
+      setIsDesktop(window.innerWidth >= 768);
     };
 
-    handleResize(); // Check on initial load
-    window.addEventListener('resize', handleResize); // Add listener for window resize
+    handleResize();
+    window.addEventListener('resize', handleResize);
 
-    return () => window.removeEventListener('resize', handleResize); // Cleanup listener
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   if (!mounted) {
@@ -162,7 +167,7 @@ const AboutPage: NextPage = () => {
           <div style={{ backgroundColor: currentTheme.card, border: `1px solid ${currentTheme.border}`, borderRadius: '0.75rem', padding: '2rem' }}>
             <h2 style={{ color: currentTheme.accent1, fontSize: '1.875rem', fontWeight: '700', marginBottom: '1rem' }}>Our Mission</h2>
             <p style={{ color: currentTheme.textSecondary, lineHeight: '1.75' }}>
-              To deliver high-quality, affordable technology solutions that address our clients unique needs, combining technical expertise with a deep understanding of industry trends to create products that are both functional and future-ready.
+              To deliver high-quality, affordable technology solutions that address our client's unique needs, combining technical expertise with a deep understanding of industry trends to create products that are both functional and future-ready.
             </p>
           </div>
           <div style={{ backgroundColor: currentTheme.card, border: `1px solid ${currentTheme.border}`, borderRadius: '0.75rem', padding: '2rem' }}>
@@ -181,7 +186,6 @@ const AboutPage: NextPage = () => {
           <div 
             style={{ 
               display: 'grid', 
-              // FIX: Use state to conditionally apply grid columns
               gridTemplateColumns: isDesktop ? '1fr 2fr' : '1fr', 
               gap: '2rem', 
               backgroundColor: currentTheme.card, 
@@ -209,14 +213,12 @@ const AboutPage: NextPage = () => {
                     transition: 'background-color 0.3s' 
                   }}
                 >
-                  <Image
+                  <img 
                     src={member.imageUrl} 
                     alt={member.name} 
-                    width={50}
-                    height={50}
                     style={{ 
-                      // width: '50px', 
-                      // height: '50px', 
+                      width: '50px', 
+                      height: '50px', 
                       borderRadius: '50%', 
                       objectFit: 'cover', 
                       marginRight: '1rem',
@@ -259,7 +261,7 @@ const AboutPage: NextPage = () => {
                   <div key={location.name}>
                     <p style={{ fontWeight: '600' }}>{location.name}</p>
                     <p style={{ color: currentTheme.textSecondary, marginBottom: '0.5rem' }}>{location.address}</p>
-                    <button onClick={() => setActiveMapUrl(location.embedUrl)} style={{ display: 'inline-block', color: 'white', fontWeight: 'bold', padding: '0.5rem 1rem', borderRadius: '0.5rem', border: 'none', cursor: 'pointer', transition: 'background-color 0.3s', backgroundColor: activeMapUrl === location.embedUrl ? currentTheme.accent1 : '#94a3b8' }}>
+                    <button onClick={() => setActiveLocation(location)} style={{ display: 'inline-block', color: 'white', fontWeight: 'bold', padding: '0.5rem 1rem', borderRadius: '0.5rem', border: 'none', cursor: 'pointer', transition: 'background-color 0.3s', backgroundColor: activeLocation.name === location.name ? currentTheme.accent1 : '#94a3b8' }}>
                       Show on Map
                     </button>
                   </div>
@@ -270,7 +272,7 @@ const AboutPage: NextPage = () => {
                     <PhoneIcon color={currentTheme.accent2} />
                     <div>
                       <h4 style={{ fontWeight: '600' }}>Phone</h4>
-                      <a href="tel:+919980936762" style={{ color: currentTheme.textSecondary, textDecoration: 'none' }}>+91 99809 36762</a>
+                      <a href="tel:+919980936762" style={{ color: currentTheme.textSecondary, textDecoration: 'none' }}>+91 9980936762</a>
                     </div>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -283,7 +285,17 @@ const AboutPage: NextPage = () => {
               </div>
             </div>
             <div style={{ borderRadius: '0.5rem', overflow: 'hidden', minHeight: '500px', width: '100%' }}>
-              <iframe src={activeMapUrl} width="100%" height="100%" style={{ border: 0 }} loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="Bytedocker Office Locations on OpenStreetMap"></iframe>
+              <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3846.32643138582!2d75.63388437512226!3d15.412923185175487!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bb8f944f7cb2301%3A0xe39ea5d1d5e09e33!2sTontadarya%20College%20of%20Engineering%2C%20Gadag!5e0!3m2!1sen!2sin!4v1758557421812!5m2!1sen!2sin"
+                  width="600"
+                  height="450"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+              ></iframe>
+              <div style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem' }}>
+              </div>
             </div>
           </div>
         </div>
