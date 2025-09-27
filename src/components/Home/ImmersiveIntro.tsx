@@ -5,19 +5,23 @@ import { AnimatedLink } from "../AnimatedLink";
 import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
 
-// --- Color Configuration (Updated) ---
+// --- Color Configuration 
 const componentColors = {
   light: {
     text: "#111111",
     subtleText: "#4B5563",
     glow: "#4169E1",
-    video: "/Background/beige.mp4", // Path to your light theme video
+    video: "/Background/beige.mp4", 
+    loaderBg: "#FFFFFF",      
+    loaderText: "#111111",    
   },
   dark: {
     text: "#FFFFFF",
     subtleText: "#9CA3AF",
     glow: "#FFD300",
-    video: "/Background/Dark.mp4", // Path to your dark theme video
+    video: "/Background/Dark.mp4", 
+    loaderBg: "#000000",      
+    loaderText: "#FFFFFF",    
   },
 };
 
@@ -27,7 +31,7 @@ export function ImmersiveIntro() {
   const [mounted, setMounted] = useState(false);
   const targetRef = useRef<HTMLDivElement | null>(null);
   const [mouse, setMouse] = useState<{ x: number; y: number } | null>(null);
-  const [isVideoLoaded, setIsVideoLoaded] = useState(false); // --- ADDED --- State to track video load status
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
 
   const { scrollYProgress } = useScroll({
     target: targetRef,
@@ -38,15 +42,12 @@ export function ImmersiveIntro() {
 
   useEffect(() => setMounted(true), []);
 
-  // --- ADDED --- Effect to disable/enable scroll based on video load status
   useEffect(() => {
     if (!isVideoLoaded) {
-      document.body.style.overflow = "hidden"; // Disable scroll
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = "auto"; // Enable scroll
+      document.body.style.overflow = "auto";
     }
-
-    // Cleanup function to ensure scroll is re-enabled if the component unmounts
     return () => {
       document.body.style.overflow = "auto";
     };
@@ -64,10 +65,22 @@ export function ImmersiveIntro() {
 
   return (
     <>
-      {/* --- ADDED --- Loading Screen Overlay */}
+      {/* --- UPDATED --- Loading Screen Overlay now uses theme colors */}
       {!isVideoLoaded && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black">
-          <p className="text-white text-xl" style={{ fontFamily: "'Quicksand Medium', sans-serif" }}>
+        <div style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 100,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: mounted ? currentColors.loaderBg : (resolvedTheme === 'dark' ? '#000' : '#FFF'),
+        }}>
+          <p style={{
+              fontFamily: "'Quicksand Medium', sans-serif",
+              fontSize: '1.25rem',
+              color: mounted ? currentColors.loaderText : (resolvedTheme === 'dark' ? '#FFF' : '#000'),
+          }}>
             Loading Experience...
           </p>
         </div>
@@ -116,12 +129,12 @@ export function ImmersiveIntro() {
               className="absolute inset-0 z-0"
             >
               <video
-                key={currentColors.video} // Add key to force re-render on theme change
+                key={currentColors.video} 
                 autoPlay
                 loop
                 muted
                 playsInline
-                onCanPlay={() => setIsVideoLoaded(true)} // --- ADDED --- Event handler to update load state
+                onCanPlay={() => setIsVideoLoaded(true)}
                 className="absolute h-full w-full object-cover"
               >
                 <source src={currentColors.video} type="video/mp4" />
@@ -174,14 +187,12 @@ export function ImmersiveIntro() {
       </section>
 
       {/* Mobile View */}
-      {/* --- ADDED --- Passing the state setter function as a prop */}
       <MobileView onVideoLoad={() => setIsVideoLoaded(true)} />
     </>
   );
 }
 
 // --- MOBILE VIEW ---
-// --- ADDED --- Accepting the onVideoLoad prop
 function MobileView({ onVideoLoad }: { onVideoLoad: () => void }) {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -208,12 +219,12 @@ function MobileView({ onVideoLoad }: { onVideoLoad: () => void }) {
       {/* Background video (Updated) */}
       <div className="absolute inset-0 z-0">
           <video
-            key={currentConfig.video} // Add key to force re-render
+            key={currentConfig.video}
             autoPlay
             loop
             muted
             playsInline
-            onCanPlay={onVideoLoad} // --- ADDED --- Using the prop to update parent state
+            onCanPlay={onVideoLoad}
             className="absolute h-full w-full object-cover"
           >
             <source src={currentConfig.video} type="video/mp4" />
@@ -269,7 +280,7 @@ function MobileView({ onVideoLoad }: { onVideoLoad: () => void }) {
   );
 }
 
-// --- HELPER COMPONENTS (No changes needed below this line) ---
+
 const GlowingButton = ({
   href,
   title,
