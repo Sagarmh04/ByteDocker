@@ -27,6 +27,7 @@ export function ImmersiveIntro() {
   const [mounted, setMounted] = useState(false);
   const targetRef = useRef<HTMLDivElement | null>(null);
   const [mouse, setMouse] = useState<{ x: number; y: number } | null>(null);
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false); // --- ADDED --- State to track video load status
 
   const { scrollYProgress } = useScroll({
     target: targetRef,
@@ -36,6 +37,21 @@ export function ImmersiveIntro() {
   const backgroundScale = useTransform(scrollYProgress, [0, 1], [1, 1.15]);
 
   useEffect(() => setMounted(true), []);
+
+  // --- ADDED --- Effect to disable/enable scroll based on video load status
+  useEffect(() => {
+    if (!isVideoLoaded) {
+      document.body.style.overflow = "hidden"; // Disable scroll
+    } else {
+      document.body.style.overflow = "auto"; // Enable scroll
+    }
+
+    // Cleanup function to ensure scroll is re-enabled if the component unmounts
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [isVideoLoaded]);
+
 
   const currentColors =
     resolvedTheme === "dark" ? componentColors.dark : componentColors.light;
@@ -48,6 +64,15 @@ export function ImmersiveIntro() {
 
   return (
     <>
+      {/* --- ADDED --- Loading Screen Overlay */}
+      {!isVideoLoaded && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black">
+          <p className="text-white text-xl" style={{ fontFamily: "'Quicksand Medium', sans-serif" }}>
+            Loading Experience...
+          </p>
+        </div>
+      )}
+
       {/* Custom Fonts */}
       <style jsx global>{`
         @font-face {
@@ -96,6 +121,7 @@ export function ImmersiveIntro() {
                 loop
                 muted
                 playsInline
+                onCanPlay={() => setIsVideoLoaded(true)} // --- ADDED --- Event handler to update load state
                 className="absolute h-full w-full object-cover"
               >
                 <source src={currentColors.video} type="video/mp4" />
@@ -148,13 +174,15 @@ export function ImmersiveIntro() {
       </section>
 
       {/* Mobile View */}
-      <MobileView />
+      {/* --- ADDED --- Passing the state setter function as a prop */}
+      <MobileView onVideoLoad={() => setIsVideoLoaded(true)} />
     </>
   );
 }
 
 // --- MOBILE VIEW ---
-function MobileView() {
+// --- ADDED --- Accepting the onVideoLoad prop
+function MobileView({ onVideoLoad }: { onVideoLoad: () => void }) {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -180,14 +208,15 @@ function MobileView() {
       {/* Background video (Updated) */}
       <div className="absolute inset-0 z-0">
           <video
-              key={currentConfig.video} // Add key to force re-render
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="absolute h-full w-full object-cover"
+            key={currentConfig.video} // Add key to force re-render
+            autoPlay
+            loop
+            muted
+            playsInline
+            onCanPlay={onVideoLoad} // --- ADDED --- Using the prop to update parent state
+            className="absolute h-full w-full object-cover"
           >
-              <source src={currentConfig.video} type="video/mp4" />
+            <source src={currentConfig.video} type="video/mp4" />
           </video>
           <div className="absolute inset-0 bg-black/40"></div>
       </div>
