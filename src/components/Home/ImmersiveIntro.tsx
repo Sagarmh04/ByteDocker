@@ -11,13 +11,13 @@ const componentColors = {
     text: "#111111",
     subtleText: "#4B5563",
     glow: "#4169E1",
-    video: "/Background/LightDesign.mp4", // Path to your light theme video
+    video: "/Background/beige.mp4", // Path to your light theme video
   },
   dark: {
     text: "#FFFFFF",
     subtleText: "#9CA3AF",
     glow: "#FFD300",
-    video: "/Background/DarkDesign.mp4", // Path to your dark theme video
+    video: "/Background/Dark.mp4", // Path to your dark theme video
   },
 };
 
