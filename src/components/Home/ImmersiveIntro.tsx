@@ -5,23 +5,23 @@ import { AnimatedLink } from "../AnimatedLink";
 import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
 
-// --- Color Configuration 
+// --- Color Configuration (Updated) ---
 const componentColors = {
   light: {
     text: "#111111",
     subtleText: "#4B5563",
     glow: "#4169E1",
-    video: "/Background/beige.mp4", 
-    loaderBg: "#FFFFFF",      
-    loaderText: "#111111",    
+    video: "/Background/beige.mp4",
+    loaderBg: "#FFFFFF",
+    loaderText: "#111111",
   },
   dark: {
     text: "#FFFFFF",
     subtleText: "#9CA3AF",
     glow: "#FFD300",
-    video: "/Background/Dark.mp4", 
-    loaderBg: "#000000",      
-    loaderText: "#FFFFFF",    
+    video: "/Background/Dark.mp4",
+    loaderBg: "#000000",
+    loaderText: "#FFFFFF",
   },
 };
 
@@ -53,6 +53,14 @@ export function ImmersiveIntro() {
     };
   }, [isVideoLoaded]);
 
+  // Effect to reset loading state on theme change
+  useEffect(() => {
+    // When the theme changes, the video source will change.
+    // This resets the loading state to false, triggering the loading screen
+    // until the new video's onCanPlay event fires.
+    setIsVideoLoaded(false);
+  }, [resolvedTheme]);
+
 
   const currentColors =
     resolvedTheme === "dark" ? componentColors.dark : componentColors.light;
@@ -65,7 +73,6 @@ export function ImmersiveIntro() {
 
   return (
     <>
-      {/* --- UPDATED --- Loading Screen Overlay now uses theme colors */}
       {!isVideoLoaded && (
         <div style={{
             position: 'fixed',
@@ -123,7 +130,6 @@ export function ImmersiveIntro() {
       >
         {mounted ? (
           <div className="sticky top-0 flex h-full items-center justify-center overflow-hidden">
-            {/* Background video with parallax (Updated) */}
             <motion.div
               style={{ scale: backgroundScale }}
               className="absolute inset-0 z-0"
@@ -142,7 +148,6 @@ export function ImmersiveIntro() {
               <div className="absolute inset-0 bg-black/40"></div>
             </motion.div>
 
-            {/* Foreground text */}
             <motion.div
               style={{ y: textY }}
               className="relative z-20 text-center px-8"
@@ -165,7 +170,6 @@ export function ImmersiveIntro() {
                 </p>
               </div>
 
-              {/* Buttons */}
               <div className="mt-12 flex flex-col items-center gap-4 sm:flex-row justify-center">
                 <GlowingButton href="/about" title="About">
                   About Us
@@ -176,7 +180,6 @@ export function ImmersiveIntro() {
               </div>
             </motion.div>
 
-            {/* Marquee */}
             <div className="pointer-events-none absolute bottom-10 left-0 z-10 w-full">
               <MarqueeText color={currentColors.text} />
             </div>
@@ -216,7 +219,6 @@ function MobileView({ onVideoLoad }: { onVideoLoad: () => void }) {
 
   return (
     <section className="relative flex h-screen w-full flex-col justify-center overflow-hidden sm:hidden">
-      {/* Background video (Updated) */}
       <div className="absolute inset-0 z-0">
           <video
             key={currentConfig.video}
@@ -232,7 +234,6 @@ function MobileView({ onVideoLoad }: { onVideoLoad: () => void }) {
           <div className="absolute inset-0 bg-black/40"></div>
       </div>
 
-      {/* Animated text content */}
       <motion.div
         initial="hidden"
         animate="show"
@@ -258,7 +259,6 @@ function MobileView({ onVideoLoad }: { onVideoLoad: () => void }) {
           {semiCaption}
         </motion.p>
         
-        {/* Buttons */}
         <motion.div
           variants={FADE_UP_VARIANTS}
           className="mt-10 flex w-full flex-col items-center gap-4 sm:w-auto sm:flex-row"
@@ -272,7 +272,6 @@ function MobileView({ onVideoLoad }: { onVideoLoad: () => void }) {
         </motion.div>
       </motion.div>
 
-      {/* Marquee */}
       <div className="pointer-events-none absolute bottom-4 left-0 z-10 w-full">
         <MarqueeText color={currentConfig.text} />
       </div>
@@ -280,7 +279,7 @@ function MobileView({ onVideoLoad }: { onVideoLoad: () => void }) {
   );
 }
 
-
+// --- HELPER COMPONENTS (No changes needed below this line) ---
 const GlowingButton = ({
   href,
   title,
